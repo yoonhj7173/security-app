@@ -4,6 +4,7 @@ import com.back.domain.post.post.entity.Post;
 
 import java.time.LocalDateTime;
 
+
 public record PostDto(
         int id,
         String title,
