@@ -4,7 +4,6 @@ import com.back.domain.member.entity.Member;
 import com.back.domain.post.post.dto.PostDto;
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.service.PostService;
-import com.back.global.exception.ServiceException;
 import com.back.global.rq.Rq;
 import com.back.global.rsData.RsData;
 import io.swagger.v3.oas.annotations.Operation;
@@ -114,11 +113,7 @@ public class ApiV1PostController {
         Member actor = rq.getActor(); // 인증된 사용자 정보 가져오기
 
         Post post = postService.findById(id).get();
-
-        if (!actor.equals(post.getAuthor())) {
-            throw new ServiceException("403-1", "수정 권한이 없습니다.");
-        }
-
+        post.checkModify(actor);
 
         postService.modify(id, reqBody.title, reqBody.content);
 
@@ -141,11 +136,8 @@ public class ApiV1PostController {
 
         Post post = postService.findById(id).get();
 
-        if(!actor.equals(post.getAuthor())) {
-            throw new ServiceException("403-1", "삭제 권한이 없습니다.");
-        }
-
         postService.deleteById(id);
+        post.checkDelete(actor);
 
         return new RsData<>(
                 "%d번 게시물이 삭제되었습니다.".formatted(id),

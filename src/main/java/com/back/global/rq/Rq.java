@@ -6,11 +6,10 @@ import com.back.global.exception.ServiceException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.RequestScope;
 
 @Component
-@RequestScope // 각 요청마다 새로운 Rq 객체가 생성되고, 요청이 끝나면 소멸됨
 @RequiredArgsConstructor
+// @RequestScope - 각 요청마다 새로운 Rq 객체가 생성되고, 요청이 끝나면 소멸됨
 public class Rq {
 
     // client가 보낸 모든 정보가 담겨있음. Spring이 자동으로 해줌
