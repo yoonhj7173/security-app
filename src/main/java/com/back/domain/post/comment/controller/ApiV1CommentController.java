@@ -98,6 +98,7 @@ public class ApiV1CommentController {
             @PathVariable int postId,
             @PathVariable int commentId
     ) {
+
         Post post = postService.findById(postId).get();
         Comment comment = post.findCommentById(commentId).get();
         post.deleteComment(commentId);
