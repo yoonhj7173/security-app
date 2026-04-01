@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -20,28 +21,6 @@ public class Rq {
     private final HttpServletRequest request;
     private final MemberService memberService;
     private final HttpServletResponse response;
-
-    public void addCookie(String name, String value) {
-
-        Cookie cookie = new Cookie(name, value);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setDomain("localhost");
-
-        response.addCookie(
-                cookie
-        );
-    }
-
-    public void deleteCookie(String name) {
-        Cookie cookie = new Cookie(name, "");
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setDomain("localhost");
-        cookie.setMaxAge(0);
-
-        response.addCookie(cookie);
-    }
 
     public Member getActor() {
 
@@ -74,4 +53,34 @@ public class Rq {
                 () -> new ServiceException("401-1", "유효하지 않은 API 키입니다.")
         );
     }
+
+    public void addCookie(String name, String value) {
+
+        Cookie cookie = new Cookie(name, value);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setDomain("localhost");
+
+        response.addCookie(
+                cookie
+        );
+    }
+
+    public void deleteCookie(String name) {
+        Cookie cookie = new Cookie(name, "");
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setDomain("localhost");
+        cookie.setMaxAge(0);
+
+        response.addCookie(cookie);
+    }
+
+    private String getHeader(String name, String defaultValue) {
+        return Optional
+                .ofNullable(request.getHeader(name))
+                .filter(headerValue -> !headerValue.isBlank())
+                .orElse(defaultValue);
+    }
+
 }
