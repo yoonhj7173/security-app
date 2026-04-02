@@ -97,8 +97,11 @@ public class ApiV1MemberController {
     @GetMapping("/me")
     public MemberDto me() {
 
-        Member actor = rq.getActor();
-        return new MemberDto(actor);
+        Member tmpActor = rq.getActor();
+
+        Member realActor = memberService.findById(tmpActor.getId()).get());
+
+        return new MemberDto(realActor);
 
     }
 }
