@@ -27,13 +27,39 @@ public class SecurityConfig {
                                 "/api/*/posts/{postId:\\d+}/comments", "/api/*/posts/{postId:\\d+}/comments/{commentId:\\d+}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/members/login", "/api/v1/members/join").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/members/logout").permitAll()
+                        .requestMatchers("/api/v1/adm/**").hasRole("ADMIN")
                         .requestMatchers("/api/*/**").authenticated()
                         .anyRequest().authenticated())
                 .csrf(( csrf) -> csrf.disable())
                 .headers((headers) -> headers
                         .addHeaderWriter(new XFrameOptionsHeaderWriter(
                                 XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
-                .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(
+                        exceptionHandling -> exceptionHandling
+                                .authenticationEntryPoint((request, response, authenticationException) -> {
+                                    response.setContentType("application/json");
+                                    response.setStatus(401);
+                                    response.getWriter().write(
+                                            """
+                                                        {
+                                                            "resultCode": "401-1",
+                                                            "msg": "로그인 후 이용해주세요."
+                                                        }
+                                                    """);
+                                })
+                                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                                            response.setContentType("application/json");
+                                            response.setStatus(403);
+                                            response.getWriter().write(
+                                                    """
+                                                                {
+                                                                    "resultCode": "403-1",
+                                                                    "msg": "권한이 없습니다."
+                                                                }
+                                                            """);
+                                        }
+                                ));;
 
         return http.build();
     }
