@@ -96,7 +96,7 @@ public class ApiV1MemberController {
 
         Member tmpActor = rq.getActor();
 
-        Member realActor = memberService.findById(tmpActor.getId()).get());
+        Member realActor = memberService.findById(tmpActor.getId()).get();
 
         return new MemberDto(realActor);
 
